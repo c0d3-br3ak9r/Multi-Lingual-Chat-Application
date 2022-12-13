@@ -1,0 +1,62 @@
+body {
+    background-image: url("../imgs/wordcloud.webp");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-blend-mode: lighten;
+    font-size: 16px;
+    color: rgb(0, 0, 0);
+    background-color: rgba(255, 255, 255, 0.69)
+}
+
+.container-fluid {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    flex-wrap: nowrap;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#myForm {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    flex-wrap: nowrap;
+    background: rgb(255,255,255,0.30);
+    width: 75%;
+    margin: 30px;
+}
+
+.form-element {
+    margin: 30px;
+}
+
+input {
+    font-size: larger;
+    border-radius: 15px;
+    border: none;
+    background: rgba(180, 179, 179, 0.115);
+    color: rgb(76, 58, 58);
+    height: 50px;
+    width: 400px;
+}
+
+input:hover {
+    opacity: 0.6;
+    border: 1px solid rgb(78, 78, 78);
+}
+
+::placeholder {
+    color: rgb(82, 82, 82);
+}
+
+#submit {
+    margin: 30px;
+    margin-top: 10px;
+    opacity: 1;
+}
+

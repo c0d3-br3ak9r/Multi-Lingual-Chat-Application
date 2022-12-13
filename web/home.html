@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+            #todo {
+                display: none;
+            }
+            #texts {
+                display: flex;
+                flex-flow: row;
+                flex-wrap: wrap;
+            }
+            .text {
+                margin: 0px;
+                padding: 0px;
+                margin-bottom: 5px;
+                margin-right: 8px;
+            }
+            .text:hover {
+                color: orange;
+            }
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 700px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #ffffff;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Multi-Lingual Chat Application</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="chat.jsp">Chat</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+    </div>
+      <div id="todo"></div>
+    <div class="col-sm-8 text-left" > 
+        <div id="texts"></div>
+      <hr>
+      <h3>Translation</h3>
+      <p id="tr"></p>
+      <input id="input" type="hidden">
+    </div>
+    <div class="col-sm-2 sidenav">
+      
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            
+        </script>
+        <script>
+            function get(txt) {
+                txt.split(" ").forEach(async element => {
+                        let x = document.createElement("p");
+                        x.setAttribute("class", "text");
+                        x.textContent = element;
+                        $.post("http://127.0.0.1:8888/", {
+                            text: element,
+                            source: "fr",
+                            target: "en",
+                        }, function(data) {
+                            console.log(data);
+                            $(x).attr("title", data);
+                        });
+                        $("#texts").append(x);
+                    });
+                }
+            $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                dataType: 'jsonp',
+                url: 'https://fr.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1',
+                success: function(jsondata){
+                    console.log(jsondata['query']['random'][0]['title']);
+                    console.log(jsondata['query']['random'][0]['id']);
+                    //cont(jsondata['query']['random'][0]['title']);
+                    let title = jsondata['query']['random'][0]['title'];
+                    let id = jsondata['query']['random'][0]['id'];
+                    let url = `https://fr.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&titles=${title}`;//`https://fr.wikipedia.org/w/api.php?action=query&prop=extracts&exlimit=1&titles=${title}&explaintext=1&exsectionformat=plain`;
+                $.ajax({
+                    type: 'GET',
+                    crossDomain: true,
+                    dataType: 'jsonp',
+                    url: url,
+                    success: function(jsondata){
+                        console.log(jsondata['query']['pages']);
+                        let div = document.getElementById("todo");
+                        div.innerHTML = (jsondata['query']['pages'][id]['extract']);
+                        get(div.innerText);
+                    }
+                 });
+                }
+             });
+        </script>
+        <script>
+            var t = '';
+            function gText(e) {
+                t = (document.all) ? document.selection.createRange().text : document.getSelection();
+                document.getElementById('input').value = t.toString().replaceAll("\n", " ");
+                //document.getElementById('input').value = document.getElementById('input').value.toString().replaceAll("\n", "");
+                //console.log(t);
+                //console.log(document.getElementById('input').value.toString().replaceAll("\n", ""));
+                $.post("http://127.0.0.1:8888/", {
+                            text: document.getElementById('input').value,
+                            source: "fr",
+                            target: "en",
+                        }, function(data) {
+                            console.log(data);
+                            document.getElementById('tr').innerHTML = data + '&nbsp;';
+                        });
+            }
+
+            document.onmouseup = gText;
+            if (!document.all) document.captureEvents(Event.MOUSEUP);
+        </script>
+</body>
+</html>
